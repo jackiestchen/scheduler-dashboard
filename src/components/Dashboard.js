@@ -29,14 +29,31 @@ const data = [
 
 class Dashboard extends Component {
   state = {
-    loading: false,
+    loading: true,
     focused: null,
+    days: [],
+    appointments: {},
+    interviewers: {},
   };
 
+  componentDidMount() {
+    const focused = JSON.parse(localStorage.getItem("focused"));
+
+    if (focused) {
+      this.setState({ focused });
+    }
+  }
+
+  componentDidUpdate(previousProps, previousState) {
+    if (previousState.focused !== this.state.focused) {
+      localStorage.setItem("focused", JSON.stringify(this.state.focused));
+    }
+  }
+
   selectPanel(id) {
-    this.setState({
-      focused: id,
-    });
+    this.setState((prevState) => ({
+      focused: prevState.focused !== null ? null : id,
+    }));
   }
 
   render() {
@@ -56,7 +73,7 @@ class Dashboard extends Component {
             id={item.id}
             label={item.label}
             value={item.value}
-            onSelect={e => this.selectPanel(item.id)}
+            onSelect={(e) => this.selectPanel(item.id)}
           />
         );
       });
